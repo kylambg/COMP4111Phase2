@@ -13,6 +13,7 @@ public class Structure {
     private static ConcurrentHashMap<Integer, Vector<Action>> actionMap = new ConcurrentHashMap<>();
     private static Random random = new Random();
 
+    //token part
     public static synchronized int addToToken(String user) {
         int token = random.nextInt();
         tokenMap.put(token, user);
@@ -32,6 +33,11 @@ public class Structure {
         return tokenMap.get(token);
     }
 
+    public static synchronized boolean validateUser(String username) {
+        return tokenMap.containsValue(username);
+    }
+
+    //transaction part
     public static synchronized int addToTransaction(Integer token) {
         int transactionID = random.nextInt();
         transactionMap.put(token, transactionID);
@@ -42,18 +48,12 @@ public class Structure {
         return transactionMap.containsValue(transactionID);
     }
 
-    public static synchronized boolean deleteFromTransaction(int transactionID) {
-        if (!validateTransaction(transactionID))
-            return false;
-        else {
-            transactionMap.remove(transactionID);
-            return true;
-        }
+    public static synchronized void deleteFromTransaction(int token) {
+        transactionMap.remove(token);
     }
 
-    public static synchronized boolean validateUser(String username) {
-
-        return tokenMap.containsValue(username);
+    public static synchronized int getTransactionIDFromToken(int token) {
+        return transactionMap.get(token);
     }
 
     public static synchronized void addToActionMap(Integer transactionID, Vector<Action> actions) {

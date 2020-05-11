@@ -65,27 +65,33 @@ public class TransactionHandler implements HttpAsyncRequestHandler<HttpRequest> 
                                     httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                                     return;
                                 }
-                                if (Structure.containTransactionIDinAction(transactionID)) {
-                                    if (operation.equalsIgnoreCase("commit")) {
-                                        Future<Boolean> result = Executors.newSingleThreadExecutor().submit(
-                                                () -> TransactionManager.getInstance().validateCommit(Structure.getAction(transactionID)));
-                                        if (result.get()) {
-                                            response.setStatusCode(HttpStatus.SC_OK);
-                                            httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
-                                            return;
+                                if (Structure.validateTransaction(transactionID)) { //correct transaction ID
+                                    if (Structure.containTransactionIDinAction(transactionID)) {//see whether user have empty action plan
+                                        if (operation.equalsIgnoreCase("commit")) {
+                                            Future<Boolean> result = Executors.newSingleThreadExecutor().submit(
+                                                    () -> TransactionManager.getInstance().validateCommit(Structure.getAction(transactionID)));
+                                            if (result.get()) {
+                                                response.setStatusCode(HttpStatus.SC_OK);
+                                                httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
+                                                return;
+                                            } else {
+                                                response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+                                                httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
+                                                return;
+                                            }
+                                        } else if (operation.equalsIgnoreCase("cancel")) {
+                                            Structure.deleteFromAction(transactionID);
                                         } else {
                                             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                                             httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                                             return;
                                         }
-                                    } else if (operation.equalsIgnoreCase("cancel")) {
-                                        Structure.deleteFromAction(transactionID);
-                                    } else {
+
+                                    } else { //empty action plan
                                         response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                                         httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                                         return;
                                     }
-
                                 } else { //wrong transaction ID
                                     response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                                     httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
@@ -118,7 +124,7 @@ public class TransactionHandler implements HttpAsyncRequestHandler<HttpRequest> 
                             entity = ((HttpEntityEnclosingRequest) httpRequest).getEntity();
                             //Check whether entity is null
                             byte[] data;
-                            if (entity == null) {
+                            if (entity == null) { //empty body
                                 response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                                 httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                                 return;
@@ -127,24 +133,34 @@ public class TransactionHandler implements HttpAsyncRequestHandler<HttpRequest> 
                                 JsonNode node = ObjectMap.INSTANCE.getObjectMapper().readTree(data);
                                 int transactionID = node.get("Transaction").asInt(-1);
                                 int boodID = node.get("Book").asInt(-1);
-                                String action = node.get("Action").asText(null);
-                                if (boodID <= 0 || action == null) {
+                                if (Structure.validateTransaction(transactionID)) {
+                                    String action = node.get("Action").asText(null);
+                                    if (boodID <= 0 || action == null) { //wrong body
+                                        response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+                                        httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
+                                        return;
+                                    }
+                                    if (Structure.containTransactionIDinAction(transactionID)) {
+                                        //first action
+                                        Vector<Action> actions = new Vector<Action>();
+                                        actions.add(new Action(boodID, action));
+                                        Structure.addToActionMap(transactionID, actions);
+                                        response.setStatusCode(HttpStatus.SC_OK);
+                                        httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
+                                        return;
+                                    } else { //new action
+                                        Structure.getAction(transactionID).add(new Action(boodID, action));
+                                        response.setStatusCode(HttpStatus.SC_OK);
+                                        httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
+                                        return;
+                                    }
+                                } else {
+                                    //wrong transaction id
                                     response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                                     httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                                     return;
                                 }
-                                if (Structure.containTransactionIDinAction(transactionID)) {
-                                    Vector<Action> actions = new Vector<Action>();
-                                    actions.add(new Action(boodID, action));
-                                    Structure.addToActionMap(transactionID, actions);
-                                } else {
-                                    Structure.getAction(transactionID).add(new Action(boodID, action));
-                                    response.setStatusCode(HttpStatus.SC_OK);
-                                    httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
-                                    return;
-                                }
                             }
-
                         } else {//wrong token
                             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                             httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
@@ -161,7 +177,6 @@ public class TransactionHandler implements HttpAsyncRequestHandler<HttpRequest> 
                     httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                     return;
                 }
-                break;
             default:
                 response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                 httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
