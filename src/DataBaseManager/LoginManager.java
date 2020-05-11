@@ -50,8 +50,8 @@ public class LoginManager extends Manager {
                     connector.closeConnection(connection);
                     return 0;
                 }
-                //IDStructure.addToToken(user);
-                System.out.println(Structure.addToToken(user));
+                Structure.addToToken(user);
+                //System.out.println(Structure.addToToken(user)); //(print out token)
                 stmt.close();
                 rs.close();
                 connector.closeConnection(connection);

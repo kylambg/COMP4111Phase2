@@ -36,7 +36,7 @@ public class BookStatusHandler implements HttpAsyncRequestHandler<HttpRequest> {
                         String uri = httpRequest.getRequestLine().getUri();
                         String[] path = uri.split("/");
                         int id = Integer.parseInt(path[path.length - 1].substring(0, path[path.length - 1].indexOf("?")));
-                        System.out.println("ID: " + id);
+                        //System.out.println("ID: " + id);
                         JsonNode node = ObjectMap.INSTANCE.getObjectMapper().createObjectNode();
                         int action = node.get("Avaliable").asInt(-1);
                         Future<Integer> loanReturnResult = Executors.newSingleThreadExecutor().submit(
@@ -82,7 +82,7 @@ public class BookStatusHandler implements HttpAsyncRequestHandler<HttpRequest> {
                         String uri = httpRequest.getRequestLine().getUri();
                         String[] path = uri.split("/");
                         int id = Integer.parseInt(path[path.length - 1].substring(0, path[path.length - 1].indexOf("?")));
-                        System.out.println("ID: " + id);
+                        //System.out.println("ID: " + id);
                         Future<Boolean> deleteResult = Executors.newSingleThreadExecutor().submit(
                                 () -> DeleteManager.getInstance().deleteBook(id));
                         if (deleteResult.get()) {
