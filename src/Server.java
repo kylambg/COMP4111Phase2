@@ -58,17 +58,12 @@ public class Server {
         //Easier then using request.getURI() in the first version
         //check the URI directly
         UriHttpAsyncRequestHandlerMapper uriHttpRequestHandlerMapper = new UriHttpAsyncRequestHandlerMapper();
-        LoginHandler loginHandler = new LoginHandler();
-        LogoutHandler logoutHandler = new LogoutHandler();
-        BookStatusHandler bookStatusHandler = new BookStatusHandler();
-        BookHandler BookHandler = new BookHandler();
-        TransactionHandler transactionHandler = new TransactionHandler();
 
-        uriHttpRequestHandlerMapper.register(ROOT + "/login", loginHandler);
-        uriHttpRequestHandlerMapper.register(ROOT + "/logout", logoutHandler);
-        uriHttpRequestHandlerMapper.register(ROOT + "/books", BookHandler);
-        //uriHttpRequestHandlerMapper.register(ROOT + "/books/*", bookStatusHandler);
-        //uriHttpRequestHandlerMapper.register(ROOT + "/transaction", transactionHandler);
+        uriHttpRequestHandlerMapper.register(ROOT + "/login", new LoginHandler());
+        uriHttpRequestHandlerMapper.register(ROOT + "/logout", new LogoutHandler());
+        uriHttpRequestHandlerMapper.register(ROOT + "/books", new BookHandler());
+        uriHttpRequestHandlerMapper.register(ROOT + "/books/*", new BookStatusHandler());
+        uriHttpRequestHandlerMapper.register(ROOT + "/transaction", new TransactionHandler());
 
         final IOReactorConfig config = IOReactorConfig.custom()
                 .setSoTimeout(15000)
