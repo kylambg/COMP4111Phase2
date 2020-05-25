@@ -36,13 +36,14 @@ public class AddToLibraryManager extends Manager {
             Connection connection = connector.getConnection();
             //Use prepared statements to prevent SQL injection, it is more elegant than first edition
             String preparedStatement = "SELECT " + ID + " FROM " + BOOK + " WHERE "
-                    + TITLE + "= % ? % AND " + AUTHOR + "= % ? % AND " + PUBLISHER + "= % ? % AND " + YEAR + "= % ? %";
+                    + TITLE + "= ? AND " + AUTHOR + "= ? AND " + PUBLISHER + "= ? AND " + YEAR + "=  ? ";
             PreparedStatement stmt = connection.prepareStatement(preparedStatement);
             stmt.setString(1, title);
             stmt.setString(2, author);
             stmt.setString(3, publisher);
             stmt.setInt(4, year);
             ResultSet rs = stmt.executeQuery();
+            System.out.println(stmt.toString());
             // Zero or one book, check the first record is suffix to tell whether the book is duplicate
             if (rs.first()) {
                 // contains book
@@ -59,8 +60,8 @@ public class AddToLibraryManager extends Manager {
                 connector.closeConnection(connection);
                 return -1;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            e.getMessage();
             //Statement fail, cannot login
             return 0;
         }
