@@ -40,7 +40,7 @@ public class AddToLibraryManager extends Manager {
             stmt.setString(3, publisher);
             stmt.setInt(4, year);
             ResultSet rs = stmt.executeQuery();
-            System.out.println(stmt.toString());
+            //System.out.println(stmt.toString());
             // Zero or one book, check the first record is suffix to tell whether the book is duplicate
             if (rs.first()) {
                 // contains book

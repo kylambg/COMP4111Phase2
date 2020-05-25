@@ -68,12 +68,12 @@ public class BookHandler implements HttpAsyncRequestHandler<HttpRequest> {
                                     () -> AddToLibraryManager.getInstance().addBook(title, author, publisher, year, Structure.getUserFromToken(token.get())));
                             int result = LoginFuture.get();
                             if (result < 0) {
-                                response.setHeader("Duplicate record:", "/books/" + (-result));
+                                response.setHeader("Duplicate record", "/books/" + (-result));
                                 response.setStatusCode(HttpStatus.SC_CONFLICT);
                                 httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                                 return;
                             } else if (result > 0) {
-                                response.setHeader("Location:", "/books/" + result);
+                                response.setHeader("Location", "/books/" + result);
                                 response.setStatusCode(HttpStatus.SC_CREATED);
                                 httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                                 return;
@@ -115,7 +115,7 @@ public class BookHandler implements HttpAsyncRequestHandler<HttpRequest> {
                         //Much better than previous approach which is using contains and do substring
                         URI uri = new URI(httpRequest.getRequestLine().getUri());
                         String[] queries = uri.getQuery().split("&");
-                        System.out.println(queries.length);
+                        //System.out.println(queries.length);
                         ConcurrentHashMap<String, String> queryList = new ConcurrentHashMap<>();
                         for (int i = 0; i < queries.length; i++) {
                             int index = queries[i].indexOf("=");

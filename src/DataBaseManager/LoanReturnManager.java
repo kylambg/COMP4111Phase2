@@ -88,7 +88,8 @@ public class LoanReturnManager extends Manager {
                     return -1;
             }
         } catch (SQLException e) {
-            e.getMessage();
+            System.out.println("SQL exception");
+            e.printStackTrace();
             return -1;
         }
         return -1;

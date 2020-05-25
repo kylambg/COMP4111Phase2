@@ -15,22 +15,33 @@ abstract public class Manager {
     protected static final String YEAR = "Year";
     protected static final String STATUS = "Statuses";
 
-    public static int getToken(String uri) throws URISyntaxException {
+    public static int getToken(String uri) {
         //this may be able to optimize to use string only
-        if (uri == null)
+        if (uri == null) {
+            System.out.println("URI is NULL");
             return -1;
+        }
         else {
-            URI u = new URI(uri);
-            String[] query = u.getQuery().split("&");
-            //for loop has a better performance than for each
-            for (int i = 0; i < query.length; ++i) {
-                if (query[i].contains("token=")) {
-                    try {
-                        return Integer.parseInt(query[i].substring(6)); //assign token to value}
-                    } catch (Exception e) {
-                        return -1; //invalid number format
+            try {
+                //System.out.println(uri);
+                URI u = new URI(uri);
+                String[] query = u.getQuery().split("&");
+                //for loop has a better performance than for each
+                for (int i = 0; i < query.length; ++i) {
+                    if (query[i].contains("token=")) {
+                        try {
+                            return Integer.parseInt(query[i].substring(6)); //assign token to value}
+                        } catch (Exception e) {
+                            System.out.println(u.toString());
+                            System.out.println("Invalid number format");
+                            return -1; //invalid number format
+                        }
                     }
                 }
+            } catch (URISyntaxException e) {
+                System.out.println("URISyntaxException");
+                e.printStackTrace();
+                return -1;
             }
         }
         return -1;
