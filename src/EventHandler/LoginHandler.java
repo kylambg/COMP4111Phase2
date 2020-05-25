@@ -59,7 +59,7 @@ public class LoginHandler implements HttpAsyncRequestHandler<HttpRequest> {
                 //Reference From https://popcornylu.gitbooks.io/java_multithread/content/async/future.html
                 Future<Integer> LoginFuture = Executors.newSingleThreadExecutor().submit(() -> LoginManager.getInstance().login(username, password));
                 //switch has a sightly better performance than IF-ELSE
-                System.out.println(LoginFuture.get());
+                //System.out.println(LoginFuture.get());
                 switch (LoginFuture.get()) {
                     case 1:
                         int token = Structure.addToToken(username);
