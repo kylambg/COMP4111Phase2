@@ -60,8 +60,8 @@ public class LookUpManager extends Manager {
                 //Always use Entry to iterate all key-value pair for performance
                 //https://blog.jooq.org/2015/02/05/top-10-easy-performance-optimisations-in-java/
                 for (ConcurrentHashMap.Entry<String, String> set : query.entrySet()) {
-                    System.out.println("key: " + set.getKey());
-                    System.out.println("query: " + set.getValue());
+                    //System.out.println("key: " + set.getKey());
+                    //System.out.println("query: " + set.getValue());
                     if (set.getKey().toLowerCase().equalsIgnoreCase("title")) {
                         executeStatement.append(TITLE).append(" LIKE '%").append(set.getValue()).append("%'").append(" AND ");
                         flag = 1;
@@ -88,7 +88,7 @@ public class LookUpManager extends Manager {
                         orderby = set.getValue();
                     }
                 }
-                System.out.println(executeStatement.toString());
+                //System.out.println(executeStatement.toString());
                 if (flag == 1)
                     //Remove last AND if we use title, year, publisher and author to perform sorting
                     executeStatement.delete(executeStatement.length() - 4, executeStatement.length());
@@ -115,7 +115,7 @@ public class LookUpManager extends Manager {
                 ResultSet rs = stmt.executeQuery(executeStatement.toString());
                 while (rs.next()) {
                     Book book = new Book(rs.getString(1), rs.getString(2), rs.getString(3), rs.getInt(4));
-                    System.out.println(book.toString());
+                    //System.out.println(book.toString());
                     books.add(book);
                 }
                 rs.close();
