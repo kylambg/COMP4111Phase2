@@ -8,8 +8,11 @@ import Object.Action;
 
 public class Structure {
     //Switch to ConcurrentHashMap, which is thread safe
+    //Token, username
     private static ConcurrentHashMap<Integer, String> tokenMap = new ConcurrentHashMap<>();
+    //token, transaction id
     private static ConcurrentHashMap<Integer, Integer> transactionMap = new ConcurrentHashMap<>();
+    //transaction id, action
     private static ConcurrentHashMap<Integer, Vector<Action>> actionMap = new ConcurrentHashMap<>();
     private static Random random = new Random();
 
@@ -46,6 +49,10 @@ public class Structure {
 
     public static synchronized boolean validateTransaction(int transactionID) {
         return transactionMap.containsValue(transactionID);
+    }
+
+    public static synchronized boolean containTransaction(int token) {
+        return transactionMap.containsKey(token);
     }
 
     public static synchronized void deleteFromTransaction(int token) {

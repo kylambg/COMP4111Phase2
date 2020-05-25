@@ -24,6 +24,7 @@ public class LogoutHandler implements HttpAsyncRequestHandler<HttpRequest> {
     public void handle(HttpRequest httpRequest, HttpAsyncExchange httpAsyncExchange, HttpContext httpContext) throws HttpException, IOException {
         final HttpResponse response = httpAsyncExchange.getResponse();
         if (!httpRequest.getRequestLine().getMethod().equals("GET")) {
+            System.out.println("Not get");
             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
             httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
             return;
@@ -32,13 +33,16 @@ public class LogoutHandler implements HttpAsyncRequestHandler<HttpRequest> {
             //For concurrency
             Future<Integer> token = Executors.newSingleThreadExecutor().submit(() -> Manager.getToken(httpRequest.getRequestLine().getUri()));
             if (Structure.validateToken(token.get())) { //true if contain
-                Structure.deleteFromAction(Structure.getTransactionIDFromToken(token.get()));
                 Structure.deleteFromToken(token.get());
-                Structure.deleteFromTransaction(token.get());
+                if (Structure.containTransaction(token.get())) {
+                    Structure.deleteFromAction(Structure.getTransactionIDFromToken(token.get()));
+                    Structure.deleteFromTransaction(token.get());
+                }
                 response.setStatusCode(HttpStatus.SC_OK);
                 httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                 return;
             } else { //false if invalid token
+                //System.out.println("invalid token");
                 response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                 httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                 return;
@@ -49,11 +53,13 @@ public class LogoutHandler implements HttpAsyncRequestHandler<HttpRequest> {
             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
             httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
         } catch (InterruptedException | ExecutionException e) {
+            System.out.println("Interrupted Exception/Execution Exception");
             e.printStackTrace();
             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
             httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
         } catch (Exception e) {
-            e.getMessage();
+            System.out.println("Other Exception");
+            e.printStackTrace();
             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
             httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
         }
