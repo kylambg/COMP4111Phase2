@@ -59,6 +59,7 @@ public class LoginHandler implements HttpAsyncRequestHandler<HttpRequest> {
                 //Reference From https://popcornylu.gitbooks.io/java_multithread/content/async/future.html
                 Future<Integer> LoginFuture = Executors.newSingleThreadExecutor().submit(() -> LoginManager.getInstance().login(username, password));
                 //switch has a sightly better performance than IF-ELSE
+                System.out.println(LoginFuture.get());
                 switch (LoginFuture.get()) {
                     case 1:
                         int token = Structure.addToToken(username);
@@ -74,11 +75,14 @@ public class LoginHandler implements HttpAsyncRequestHandler<HttpRequest> {
                         response.setStatusCode(HttpStatus.SC_CONFLICT);
                         httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                         return;
-                    default:
+                    case 0:
+                        //System.out.println("WRONG USER/PASSWORD");
                         response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                         httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                         return;
                 }
+                response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+                httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
             } catch (Exception e) {
                 e.getMessage();
                 response.setStatusCode(HttpStatus.SC_BAD_REQUEST);

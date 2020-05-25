@@ -73,7 +73,7 @@ public class BookStatusHandler implements HttpAsyncRequestHandler<HttpRequest> {
                             }
 
                         } else {
-                            System.out.println("Invalid token");
+                            //System.out.println("Invalid token");
                             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                             httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                             return;

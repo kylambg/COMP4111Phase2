@@ -75,6 +75,13 @@ public class LookUpManager extends Manager {
                         executeStatement.append(YEAR).append(" LIKE '%").append(set.getValue()).append("%'").append(" AND ");
                         flag = 1;
                     } else if (set.getKey().toLowerCase().equalsIgnoreCase("id")) {
+                        try {
+                            if (Integer.parseInt(set.getValue()) <= 0)
+                                return null;
+                        } catch (NumberFormatException e) {
+                            e.getMessage();
+                            return null;
+                        }
                         executeStatement.append(ID).append(" LIKE '%").append(set.getValue()).append("%'").append(" AND ");
                         flag = 1;
                     } else if (set.getKey().toLowerCase().equalsIgnoreCase("sortby")) {
@@ -105,6 +112,12 @@ public class LookUpManager extends Manager {
                     executeStatement.append(" ").append(orderby);
                 }
                 if (limit != null) {
+                    try {
+                        if (Integer.parseInt(limit) < 0)
+                            return null;
+                    } catch (NumberFormatException e) {
+                        e.getMessage();
+                    }
                     executeStatement.append(" LIMIT ").append(limit);
                 }
                 executeStatement.append(";");

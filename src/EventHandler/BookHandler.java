@@ -114,6 +114,7 @@ public class BookHandler implements HttpAsyncRequestHandler<HttpRequest> {
                         //Simple idea to split to query pair
                         //Much better than previous approach which is using contains and do substring
                         URI uri = new URI(httpRequest.getRequestLine().getUri());
+                        //System.out.println(uri);
                         String[] queries = uri.getQuery().split("&");
                         //System.out.println(queries.length);
                         ConcurrentHashMap<String, String> queryList = new ConcurrentHashMap<>();
@@ -125,6 +126,11 @@ public class BookHandler implements HttpAsyncRequestHandler<HttpRequest> {
                         Future<Vector<Book>> bookVector = Executors.newSingleThreadExecutor().submit(
                                 () -> (LookUpManager.getInstance().getBooks(queryList, Structure.getUserFromToken(token.get()))));
                         //Book Handling (TO JSON ARRAY)
+                        if (bookVector.get() == null) {
+                            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+                            httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
+                            return;
+                        }
                         if (bookVector.get().size() == 0) {
                             response.setStatusCode(HttpStatus.SC_NO_CONTENT);
                             httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
@@ -142,7 +148,7 @@ public class BookHandler implements HttpAsyncRequestHandler<HttpRequest> {
                         }
 
                     } else { //false if invalid token
-                        System.out.println("invalid token");
+                        //System.out.println("invalid token");
                         response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                         httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                         return;

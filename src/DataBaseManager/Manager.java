@@ -32,8 +32,8 @@ abstract public class Manager {
                         try {
                             return Integer.parseInt(query[i].substring(6)); //assign token to value}
                         } catch (Exception e) {
-                            System.out.println(u.toString());
-                            System.out.println("Invalid number format");
+                            //System.out.println(u.toString());
+                            //System.out.println("Invalid number format");
                             return -1; //invalid number format
                         }
                     }

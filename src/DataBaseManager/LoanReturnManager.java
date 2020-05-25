@@ -28,6 +28,8 @@ public class LoanReturnManager extends Manager {
     }
 
     public int loanReturn(int action, int id) {
+        if (id <= 0)
+            return -1;
         try {
             Connection connection = connector.getConnection();
             switch (action) {

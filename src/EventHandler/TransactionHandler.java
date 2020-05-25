@@ -81,6 +81,9 @@ public class TransactionHandler implements HttpAsyncRequestHandler<HttpRequest> 
                                             }
                                         } else if (operation.equalsIgnoreCase("cancel")) {
                                             Structure.deleteFromAction(transactionID);
+                                            response.setStatusCode(HttpStatus.SC_OK);
+                                            httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
+                                            return;
                                         } else {
                                             response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                                             httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
@@ -115,7 +118,6 @@ public class TransactionHandler implements HttpAsyncRequestHandler<HttpRequest> 
                     httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                     return;
                 }
-                break;
             case "PUT":
                 if (httpRequest instanceof HttpEntityEnclosingRequest) {
                     try {
