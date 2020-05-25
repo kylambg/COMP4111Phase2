@@ -44,6 +44,7 @@ public class LookUpManager extends Manager {
                 ResultSet rs = stmtCheck.executeQuery(executeStatement.toString());
                 while (rs.next()) {
                     Book book = new Book(rs.getString(1), rs.getString(2), rs.getString(3), rs.getInt(4));
+                    System.out.println(book.toString());
                     books.add(book);
                 }
                 rs.close();
@@ -51,23 +52,31 @@ public class LookUpManager extends Manager {
                 connector.closeConnection(connection);
                 return books;
             } else {
-                executeStatement.append("WHERE ");
+                executeStatement.append(" WHERE ");
                 String sortby = null;
                 String limit = null;
                 String orderby = null;
+                int flag = 0;
                 //Always use Entry to iterate all key-value pair for performance
                 //https://blog.jooq.org/2015/02/05/top-10-easy-performance-optimisations-in-java/
                 for (ConcurrentHashMap.Entry<String, String> set : query.entrySet()) {
+                    System.out.println("key: " + set.getKey());
+                    System.out.println("query: " + set.getValue());
                     if (set.getKey().toLowerCase().equalsIgnoreCase("title")) {
                         executeStatement.append(TITLE).append(" LIKE '%").append(set.getValue()).append("%'").append(" AND ");
+                        flag = 1;
                     } else if (set.getKey().toLowerCase().equalsIgnoreCase("author")) {
                         executeStatement.append(AUTHOR).append(" LIKE '%").append(set.getValue()).append("%'").append(" AND ");
+                        flag = 1;
                     } else if (set.getKey().toLowerCase().equalsIgnoreCase("publisher")) {
                         executeStatement.append(PUBLISHER).append(" LIKE '%").append(set.getValue()).append("%'").append(" AND ");
+                        flag = 1;
                     } else if (set.getKey().toLowerCase().equalsIgnoreCase("year")) {
                         executeStatement.append(YEAR).append(" LIKE '%").append(set.getValue()).append("%'").append(" AND ");
+                        flag = 1;
                     } else if (set.getKey().toLowerCase().equalsIgnoreCase("id")) {
                         executeStatement.append(ID).append(" LIKE '%").append(set.getValue()).append("%'").append(" AND ");
+                        flag = 1;
                     } else if (set.getKey().toLowerCase().equalsIgnoreCase("sortby")) {
                         //support id/title/author/publisher/year
                         sortby = set.getValue();
@@ -79,27 +88,34 @@ public class LookUpManager extends Manager {
                         orderby = set.getValue();
                     }
                 }
-                //Remove last AND
-                executeStatement.delete(executeStatement.length() - 4, executeStatement.length());
+                System.out.println(executeStatement.toString());
+                if (flag == 1)
+                    //Remove last AND if we use title, year, publisher and author to perform sorting
+                    executeStatement.delete(executeStatement.length() - 4, executeStatement.length());
+                else if (flag == 0)
+                    //Remove WHERE
+                    executeStatement.delete(executeStatement.length() - 6, executeStatement.length());
                 if (sortby != null) {
                     if (sortby.equalsIgnoreCase("id"))
-                        executeStatement.append("ORDER BY ").append(ID);
+                        executeStatement.append(" ORDER BY ").append(ID);
                     else
-                        executeStatement.append("ORDER BY ").append(sortby);
+                        executeStatement.append(" ORDER BY ").append(sortby);
                 }
                 if (orderby != null) {
-                    executeStatement.append(orderby);
+                    executeStatement.append(" ").append(orderby);
                 }
                 if (limit != null) {
-                    executeStatement.append("LIMIT ").append(limit);
+                    executeStatement.append(" LIMIT ").append(limit);
                 }
                 executeStatement.append(";");
                 //check the statement
-                System.out.println(executeStatement);
+                //System.out.println(executeStatement);
+                //System.out.println("");
                 Statement stmt = connection.createStatement();
                 ResultSet rs = stmt.executeQuery(executeStatement.toString());
                 while (rs.next()) {
                     Book book = new Book(rs.getString(1), rs.getString(2), rs.getString(3), rs.getInt(4));
+                    System.out.println(book.toString());
                     books.add(book);
                 }
                 rs.close();

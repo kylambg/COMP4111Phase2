@@ -106,57 +106,54 @@ public class BookHandler implements HttpAsyncRequestHandler<HttpRequest> {
                 }
             }
             case "GET": {
-                if (httpRequest instanceof HttpEntityEnclosingRequest) {
-                    Future<Integer> token = Executors.newSingleThreadExecutor().submit(() -> Manager.getToken(httpRequest.getRequestLine().getUri()));
-                    try {
-                        if (Structure.validateToken(token.get())) {
-                            //Reference from :https://stackoverflow.com/questions/13592236/parse-a-uri-string-into-name-value-collection
-                            //Simple idea to split to query pair
-                            //Much better than previous approach which is using contains and do substring
-                            URI uri = new URI(httpRequest.getRequestLine().getUri());
-                            String[] queries = uri.getQuery().split("&");
-                            ConcurrentHashMap<String, String> queryList = new ConcurrentHashMap<>();
-                            for (int i = 0; i < queries.length; i++) {
-                                int index = queries[i].indexOf("=");
-                                queryList.put(URLDecoder.decode(queries[i].substring(0, index), "UTF-8"),
-                                        URLDecoder.decode(queries[i].substring(index + 1), "UTF-8"));
-                            }
-                            Future<Vector<Book>> bookVector = Executors.newSingleThreadExecutor().submit(
-                                    () -> (LookUpManager.getInstance().getBooks(queryList, Structure.getUserFromToken(token.get()))));
-                            //Book Handling (TO JSON ARRAY)
-                            if (bookVector.get().size() == 0) {
-                                response.setStatusCode(HttpStatus.SC_NO_CONTENT);
-                                httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
-                                return;
-                            } else {
-                                ObjectNode jsonResult = ObjectMap.INSTANCE.getObjectMapper().createObjectNode();
-                                //https://stackoverflow.com/questions/30997362/how-to-modify-jsonnode-in-java
-                                //https://www.codota.com/code/java/methods/com.fasterxml.jackson.databind.node.ObjectNode/putPOJO
-                                jsonResult.put("FoundBooks", bookVector.get().size());
-                                jsonResult.putPOJO("Results", bookVector.get());
-                                response.setEntity(new StringEntity(jsonResult.toString()));
-                                response.setStatusCode(HttpStatus.SC_OK);
-                                httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
-                                return;
-                            }
-
-                        } else { //false if invalid token
-                            response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+                //Not need to check instance of entity request(No entity contain)
+                Future<Integer> token = Executors.newSingleThreadExecutor().submit(() -> Manager.getToken(httpRequest.getRequestLine().getUri()));
+                try {
+                    if (Structure.validateToken(token.get())) {
+                        //Reference from :https://stackoverflow.com/questions/13592236/parse-a-uri-string-into-name-value-collection
+                        //Simple idea to split to query pair
+                        //Much better than previous approach which is using contains and do substring
+                        URI uri = new URI(httpRequest.getRequestLine().getUri());
+                        String[] queries = uri.getQuery().split("&");
+                        System.out.println(queries.length);
+                        ConcurrentHashMap<String, String> queryList = new ConcurrentHashMap<>();
+                        for (int i = 0; i < queries.length; i++) {
+                            int index = queries[i].indexOf("=");
+                            queryList.put(URLDecoder.decode(queries[i].substring(0, index), "UTF-8"),
+                                    URLDecoder.decode(queries[i].substring(index + 1), "UTF-8"));
+                        }
+                        Future<Vector<Book>> bookVector = Executors.newSingleThreadExecutor().submit(
+                                () -> (LookUpManager.getInstance().getBooks(queryList, Structure.getUserFromToken(token.get()))));
+                        //Book Handling (TO JSON ARRAY)
+                        if (bookVector.get().size() == 0) {
+                            response.setStatusCode(HttpStatus.SC_NO_CONTENT);
+                            httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
+                            return;
+                        } else {
+                            ObjectNode jsonResult = ObjectMap.INSTANCE.getObjectMapper().createObjectNode();
+                            //https://stackoverflow.com/questions/30997362/how-to-modify-jsonnode-in-java
+                            //https://www.codota.com/code/java/methods/com.fasterxml.jackson.databind.node.ObjectNode/putPOJO
+                            jsonResult.put("FoundBooks", bookVector.get().size());
+                            jsonResult.putPOJO("Results", bookVector.get());
+                            response.setEntity(new StringEntity(jsonResult.toString()));
+                            response.setStatusCode(HttpStatus.SC_OK);
                             httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                             return;
                         }
-                    } catch (InterruptedException | ExecutionException | URISyntaxException | UnsupportedEncodingException e) {
-                        e.printStackTrace();
+
+                    } else { //false if invalid token
+                        System.out.println("invalid token");
                         response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                         httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                         return;
                     }
-                } else { //httpRequest not instance ofHttpEntityEnclosingRequest
+                } catch (InterruptedException | ExecutionException | URISyntaxException | UnsupportedEncodingException e) {
+                    System.out.println("Interruped/Execution/URI/Unsupported Encoding Exception");
+                    e.printStackTrace();
                     response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                     httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                     return;
                 }
-
             }
             default:
                 //wrong method
