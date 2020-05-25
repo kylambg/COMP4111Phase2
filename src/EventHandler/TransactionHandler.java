@@ -140,17 +140,24 @@ public class TransactionHandler implements HttpAsyncRequestHandler<HttpRequest> 
                                         httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                                         return;
                                     }
-                                    if (Structure.containTransactionIDinAction(transactionID)) {
-                                        //first action
-                                        Vector<Action> actions = new Vector<Action>();
-                                        actions.add(new Action(boodID, action));
-                                        Structure.addToActionMap(transactionID, actions);
-                                        response.setStatusCode(HttpStatus.SC_OK);
-                                        httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
-                                        return;
-                                    } else { //new action
-                                        Structure.getAction(transactionID).add(new Action(boodID, action));
-                                        response.setStatusCode(HttpStatus.SC_OK);
+                                    if (action.equalsIgnoreCase("loan") || action.equalsIgnoreCase("return")) {
+                                        if (!Structure.containTransactionIDinAction(transactionID)) {
+                                            //first action
+                                            Vector<Action> actions = new Vector<Action>();
+                                            actions.add(new Action(boodID, action));
+                                            Structure.addToActionMap(transactionID, actions);
+                                            response.setStatusCode(HttpStatus.SC_OK);
+                                            httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
+                                            return;
+                                        } else { //new action
+                                            Structure.getAction(transactionID).add(new Action(boodID, action));
+                                            response.setStatusCode(HttpStatus.SC_OK);
+                                            httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
+                                            return;
+                                        }
+                                    } else {
+                                        //Action other than loan and return
+                                        response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                                         httpAsyncExchange.submitResponse(new BasicAsyncResponseProducer(response));
                                         return;
                                     }
