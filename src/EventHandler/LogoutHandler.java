@@ -33,6 +33,7 @@ public class LogoutHandler implements HttpAsyncRequestHandler<HttpRequest> {
             //For concurrency
             Future<Integer> token = Executors.newSingleThreadExecutor().submit(() -> Manager.getToken(httpRequest.getRequestLine().getUri()));
             if (Structure.validateToken(token.get())) { //true if contain
+                Structure.deleteFromUserPassword(Structure.getUserFromToken(token.get()));
                 Structure.deleteFromToken(token.get());
                 if (Structure.containTransaction(token.get())) {
                     Structure.deleteFromAction(Structure.getTransactionIDFromToken(token.get()));

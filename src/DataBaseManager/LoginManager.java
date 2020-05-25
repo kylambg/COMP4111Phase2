@@ -31,7 +31,7 @@ public class LoginManager extends Manager {
     public int login(String user, String password) {
         //System.out.println("USER: " + user+ " PASSWORD "+ password);
         //System.out.println(IDStructure.validateUser(user));
-        if (Structure.validateUser(user)) {
+        if (Structure.validateUserExist(user, password)) {
             //System.out.println("Already Login");
             return -1;
         } else {
@@ -50,6 +50,7 @@ public class LoginManager extends Manager {
                     connector.closeConnection(connection);
                     return 0;
                 }
+                Structure.addToUserPassword(user, password);
                 Structure.addToToken(user);
                 //System.out.println(Structure.addToToken(user)); //(print out token)
                 stmt.close();
