@@ -1,9 +1,6 @@
 package DataBaseManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class AddToLibraryManager extends Manager {
     private Connector connector;
@@ -85,16 +82,18 @@ public class AddToLibraryManager extends Manager {
                 //Use prepared statements to prevent SQL injection, it is more elegant than first edition
                 String updateStatement = "INSERT INTO " + BOOK + " (" + TITLE + "," + AUTHOR + "," + PUBLISHER + "," + YEAR + ")"
                         + " VALUES (?, ?, ?, ?)";
-                PreparedStatement update = connection.prepareStatement(updateStatement);
+                PreparedStatement update = connection.prepareStatement(updateStatement, Statement.RETURN_GENERATED_KEYS);
                 update.setString(1, title);
                 update.setString(2, author);
                 update.setString(3, publisher);
                 update.setInt(4, year);
                 update.executeUpdate();
-                //Reference: https://www.programcreek.com/java-api-examples/?class=java.sql.PreparedStatement&method=getGeneratedKeys
+                //Reference: https://blog.csdn.net/weixin_42193004/article/details/94958474?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase
                 //Can get key directly instead of doing a new search, can boost the performance
                 ResultSet rs = update.getGeneratedKeys();
-                int newBookID = rs.getInt(ID);
+                int newBookID = 0;
+                if (rs.next())
+                    newBookID = rs.getInt(1);
                 rs.close();
                 update.close();
                 connector.closeConnection(connection);

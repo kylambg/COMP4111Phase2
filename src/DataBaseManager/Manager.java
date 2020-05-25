@@ -8,7 +8,7 @@ abstract public class Manager {
     protected static final String USER = "users";
     protected static final String USERNAME = "userName";
     protected static final String PASSWORD = "Passwords";
-    protected static final String ID = "bookID";
+    protected static final String ID = "BookID";
     protected static final String TITLE = "Title";
     protected static final String AUTHOR = "Author";
     protected static final String PUBLISHER = "Publisher";
