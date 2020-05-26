@@ -10,7 +10,7 @@ import java.util.List;
 public class Connector {
     final static String URL = "jdbc:mysql://localhost:3306/Comp4111"; //DBMS schema name
     final static String USER = "root";
-    final static String PASSWD = "MySQL20426212";
+    final static String PASSWD = "123";
     final static String Driver = "com.mysql.jdbc.Driver";
     final static int MAX_CONN = 100;
 
