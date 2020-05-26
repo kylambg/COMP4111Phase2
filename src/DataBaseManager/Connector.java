@@ -10,7 +10,7 @@ import java.util.List;
 public class Connector {
     final static String URL = "jdbc:mysql://localhost:3306/Comp4111"; //DBMS schema name
     final static String USER = "root";
-    final static String PASSWD = "heheEvery_where";
+    final static String PASSWD = "MySQL20426212";
     final static String Driver = "com.mysql.jdbc.Driver";
     final static int MAX_CONN = 100;
 
@@ -26,7 +26,7 @@ public class Connector {
      * If there does not have any connection, use the first 1
      * Else, get the connection from pool
      *
-     * @return A new connection
+     * @return type Connection: A new connection
      * @throws SQLException
      */
     synchronized Connection getConnection() throws SQLException {

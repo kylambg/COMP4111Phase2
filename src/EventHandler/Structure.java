@@ -32,7 +32,10 @@ public class Structure {
 
     //token part
     public static synchronized int addToToken(String user) {
-        int token = random.nextInt();
+        int token=-1;
+        do {
+            token = random.nextInt();
+        }while(tokenMap.containsValue(token));
         tokenMap.put(token, user);
         return token;
     }
@@ -52,7 +55,10 @@ public class Structure {
 
     //transaction part
     public static synchronized int addToTransaction(Integer token) {
-        int transactionID = random.nextInt();
+        int transactionID=-1;
+        do{
+            transactionID = random.nextInt();
+        }while(transactionMap.containsValue(transactionID));
         transactionMap.put(token, transactionID);
         return transactionID;
     }

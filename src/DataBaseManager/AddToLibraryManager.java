@@ -25,6 +25,17 @@ public class AddToLibraryManager extends Manager {
         return AddToLibraryManager.Singleton.instance;
     }
 
+
+    /**
+     *
+     * @param title title of book to be fetched
+     * @param author author of book to be fetched
+     * @param publisher publisher of book to be fetched
+     * @param year year published of book to be fetched
+     * @param user current user initiating the request
+     * @return type integer: ID if book found, -1 if not found, 0 if statement fail/can't login
+     * @author kylambg
+     */
     public int getBookID(String title, String author, String publisher, int year, String user) {
         try {
             //because only single instance is created, put getConnection within method allows a thread
@@ -64,6 +75,15 @@ public class AddToLibraryManager extends Manager {
         }
     }
 
+    /**
+     *
+     * @param title title of book to be added
+     * @param author author of book to be added
+     * @param publisher publisher of book to be added
+     * @param year year of publishing of book to be added
+     * @param user current user initiating the request
+     * @return integer -bookID (negative value) if book already exist, new book ID if successfully added, 0 if error
+     */
     public int addBook(String title, String author, String publisher, int year, String user) {
         try {
             //because only single instance is created, put getConnection within method allows a thread
@@ -73,7 +93,7 @@ public class AddToLibraryManager extends Manager {
             //If already has that book, ID will be positive
             int bookID = this.getBookID(title, author, publisher, year, user);
             if (bookID > 0) {
-                //duplicate book
+                //duplicate book / book already exist in records
                 //compare to first implementation, this approach reduce invoking getBookID method again
                 //to retrieve BookID
                 //idea reference from opponent team in phase 1

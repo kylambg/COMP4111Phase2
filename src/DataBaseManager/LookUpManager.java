@@ -34,6 +34,13 @@ public class LookUpManager extends Manager {
     //using Vector to return multiple records
     //Vector is thread-safe
     //better than using a int string to store multiple records in original version
+
+    /**
+     *
+     * @param query ConcurrentHashMap<String,String> - stores token
+     * @param user String - current user
+     * @return Vector<Book> - Vector obj. with books returned from look up
+     */
     public Vector<Book> getBooks(ConcurrentHashMap<String, String> query, String user) {
         StringBuffer executeStatement = new StringBuffer().append("SELECT Title, Author, Publisher, Year FROM ").append(BOOK);
         Vector<Book> books = new Vector<>();

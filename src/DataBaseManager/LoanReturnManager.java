@@ -27,6 +27,12 @@ public class LoanReturnManager extends Manager {
         return Singleton.instance;
     }
 
+    /**
+     *
+     * @param action int - 0 for loan, 1  for return
+     * @param id int - book ID to loan/return
+     * @return int - 0 if no record, -1 if invalid request/error, 1 if successful
+     */
     public int loanReturn(int action, int id) {
         if (id <= 0)
             return -1;

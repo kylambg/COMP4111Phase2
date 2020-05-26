@@ -30,6 +30,11 @@ public class TransactionManager extends Manager {
         return Singleton.instance;
     }
 
+    /**
+     *
+     * @param actions Vector<Action> - list of actions to be commited
+     * @return boolean - true if success, false otherwise
+     */
     public boolean validateCommit(Vector<Action> actions) {
         try {
             Connection connection = connector.getConnection();

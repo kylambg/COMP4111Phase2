@@ -27,9 +27,14 @@ public class DeleteManager extends Manager {
         return Singleton.instance;
     }
 
+    /**
+     *
+     * @param id id of book to be deleted
+     * @return type boolean: true if successful deletion, false otherwise
+     * @throws SQLException
+     */
     public boolean deleteBook(int id) throws SQLException {
-        Connection connection = connector.getConnection();
-        Statement stmt = connection.createStatement();
+        Statement stmt = connector.getConnection().createStatement();
         ResultSet rs = stmt.executeQuery("SELECT " + ID + " FROM " + BOOK + " WHERE " + ID + " = " + id + ";");
         if (rs.next()) { //only one record as id is unique
             stmt.executeUpdate("DELETE FROM " + BOOK + " where " + ID + " = " + id + ";");

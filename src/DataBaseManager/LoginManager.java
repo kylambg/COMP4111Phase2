@@ -28,6 +28,12 @@ public class LoginManager extends Manager {
         return Singleton.instance;
     }
 
+    /**
+     *
+     * @param user String: user name for login
+     * @param password String: password for login
+     * @return int: -1 if already logged, 0 if wrong credentials, 1 if success
+     */
     public int login(String user, String password) {
         //System.out.println("USER: " + user+ " PASSWORD "+ password);
         //System.out.println(IDStructure.validateUser(user));
