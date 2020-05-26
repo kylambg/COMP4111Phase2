@@ -15,6 +15,11 @@ abstract public class Manager {
     protected static final String YEAR = "Year";
     protected static final String STATUS = "Statuses";
 
+    /**
+     *
+     * @param uri String
+     * @return int - -1 if URI is null, -1 if error, else token
+     */
     public static int getToken(String uri) {
         //this may be able to optimize to use string only
         if (uri == null) {
