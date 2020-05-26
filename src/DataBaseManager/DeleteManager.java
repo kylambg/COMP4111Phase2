@@ -38,6 +38,7 @@ public class DeleteManager extends Manager {
         ResultSet rs = stmt.executeQuery("SELECT " + ID + " FROM " + BOOK + " WHERE " + ID + " = " + id + ";");
         if (rs.next()) { //only one record as id is unique
             stmt.executeUpdate("DELETE FROM " + BOOK + " where " + ID + " = " + id + ";");
+            stmt.close();
             return true;
         } else
             return false;
