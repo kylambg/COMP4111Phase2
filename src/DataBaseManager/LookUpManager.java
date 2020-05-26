@@ -51,7 +51,7 @@ public class LookUpManager extends Manager {
                 ResultSet rs = stmtCheck.executeQuery(executeStatement.toString());
                 while (rs.next()) {
                     Book book = new Book(rs.getString(1), rs.getString(2), rs.getString(3), rs.getInt(4));
-                    System.out.println(book.toString());
+                    //System.out.println(book.toString());
                     books.add(book);
                 }
                 rs.close();
