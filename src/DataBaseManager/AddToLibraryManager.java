@@ -53,21 +53,18 @@ public class AddToLibraryManager extends Manager {
             ResultSet rs = stmt.executeQuery();
             //System.out.println(stmt.toString());
             // Zero or one book, check the first record is suffix to tell whether the book is duplicate
+            int returnval;
             if (rs.first()) {
                 // contains book
-                int result = rs.getInt(ID);
-                rs.close();
-                stmt.close();
-                connector.closeConnection(connection);
-                return result;
+                returnval = rs.getInt(ID);
             }
             // no that book
-            else {
-                rs.close();
-                stmt.close();
-                connector.closeConnection(connection);
-                return -1;
-            }
+            else returnval=-1;
+
+            rs.close();
+            stmt.close();
+            connector.closeConnection(connection);
+            return returnval;
         } catch (Exception e) {
             e.getMessage();
             //Statement fail, cannot login
