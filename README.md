@@ -4,4 +4,4 @@
 3. The default port for DB is 8080
 4. I haven't test my server on Linux, regarding to case-sensitive issue, please modify this line
     <code>final static String URL = "jdbc:mysql://localhost:3306/Comp4111"; //DBMS schema name</code>
-    to "comp4111", or basing on the schema name you have made
+    to "comp4111", or basing on the schema name you have made in Connector.java
